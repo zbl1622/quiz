@@ -3,6 +3,7 @@ package com.leetcode.quiz;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class ProblemInterview1714 {
 
         System.out.println(JSON.toJSONString(new ProblemInterview1714().smallestK(array, k)));
     }
+
+//    public int[] smallestK(int[] arr, int k) {
+//        Arrays.sort(arr);
+//        int[] result = new int[k];
+//        System.arraycopy(arr, 0, result, 0, k);
+//        return result;
+//    }
 
     public int[] smallestK(int[] arr, int k) {
         if (k == 0) {
