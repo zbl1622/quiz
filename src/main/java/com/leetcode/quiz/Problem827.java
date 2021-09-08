@@ -1,6 +1,8 @@
 package com.leetcode.quiz;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * 827. 最大人工岛(正确但是超时)
@@ -48,10 +50,14 @@ public class Problem827 {
 
     public static void main(String... args) {
         int[][] grid = {
-                {1, 0, 1},
-                {0, 1, 0},
-                {0, 1, 0}
+                {1, 1},
+                {1, 0}
         };
+//        int[][] grid = {
+//                {1, 0, 1},
+//                {0, 1, 0},
+//                {0, 1, 0}
+//        };
 
         System.out.println(new Problem827().largestIsland(grid));
     }
@@ -59,31 +65,66 @@ public class Problem827 {
     public int largestIsland(int[][] grid) {
         boolean hasZero = false;
         int max = 0;
+        HashSet<Integer> allSet = new HashSet<>();
+        ArrayList<HashSet<Integer>> list = new ArrayList<>();
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] == 0) {
-                    hasZero = true;
-                    grid[i][j] = 1;
-                    HashSet<Integer> hashSet = new HashSet<>();
-                    checkArea(grid, hashSet, i, j);
-                    if (hashSet.size() > max) {
-                        max = hashSet.size();
+                if (grid[i][j] == 1) {
+                    int key = i * 1000 + j;
+                    if (!allSet.contains(key)) {
+                        HashSet<Integer> hashSet = new HashSet<>();
+                        checkArea(grid, hashSet, i, j);
+                        allSet.addAll(hashSet);
+                        list.add(hashSet);
                     }
-                    grid[i][j] = 0;
+                } else {
+                    hasZero = true;
                 }
             }
         }
         if (!hasZero) {
             return grid.length * grid.length;
-        } else {
-            return max;
         }
+        for (int x = 0; x < list.size(); x++) {
+            HashSet<Integer> hashSet = list.get(x);
+            for (int key : hashSet) {
+                int i = key / 1000;
+                int j = key % 1000;
+                grid[i][j] = x + 1;
+            }
+        }
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 0) {
+                    int s = 1;
+                    int set1 = findArea(grid, i - 1, j);
+                    int set2 = findArea(grid, i, j - 1);
+                    int set3 = findArea(grid, i + 1, j);
+                    int set4 = findArea(grid, i, j + 1);
+                    if (set1 != 0) {
+                        s += list.get(set1 - 1).size();
+                    }
+                    if (set2 != 0 && set2 != set1) {
+                        s += list.get(set2 - 1).size();
+                    }
+                    if (set3 != 0 && set3 != set1 && set3 != set2) {
+                        s += list.get(set3 - 1).size();
+                    }
+                    if (set4 != 0 && set4 != set1 && set4 != set2 && set4 != set3) {
+                        s += list.get(set4 - 1).size();
+                    }
+                    if (s > max) {
+                        max = s;
+                    }
+                }
+            }
+        }
+        return max;
     }
 
     public void checkArea(int[][] grid, HashSet<Integer> hashSet, int i, int j) {
         int key = i * 1000 + j;
         if (i < 0 || j < 0 || i >= grid.length || j >= grid.length || hashSet.contains(key)) {
-            return;
         } else if (grid[i][j] == 1) {
             hashSet.add(key);
             checkArea(grid, hashSet, i - 1, j);
@@ -92,5 +133,50 @@ public class Problem827 {
             checkArea(grid, hashSet, i, j + 1);
         }
     }
+
+    public int findArea(int[][] grid, int i, int j) {
+        if (i < 0 || j < 0 || i >= grid.length || j >= grid.length) {
+            return 0;
+        }
+        return grid[i][j];
+    }
+
+    //////////////////////简单方法，超时//////////////////////////
+//    public int largestIsland(int[][] grid) {
+//        boolean hasZero = false;
+//        int max = 0;
+//        for (int i = 0; i < grid.length; i++) {
+//            for (int j = 0; j < grid[0].length; j++) {
+//                if (grid[i][j] == 0) {
+//                    hasZero = true;
+//                    grid[i][j] = 1;
+//                    HashSet<Integer> hashSet = new HashSet<>();
+//                    checkArea(grid, hashSet, i, j);
+//                    if (hashSet.size() > max) {
+//                        max = hashSet.size();
+//                    }
+//                    grid[i][j] = 0;
+//                }
+//            }
+//        }
+//        if (!hasZero) {
+//            return grid.length * grid.length;
+//        } else {
+//            return max;
+//        }
+//    }
+//
+//    public void checkArea(int[][] grid, HashSet<Integer> hashSet, int i, int j) {
+//        int key = i * 1000 + j;
+//        if (i < 0 || j < 0 || i >= grid.length || j >= grid.length || hashSet.contains(key)) {
+//            return;
+//        } else if (grid[i][j] == 1) {
+//            hashSet.add(key);
+//            checkArea(grid, hashSet, i - 1, j);
+//            checkArea(grid, hashSet, i, j - 1);
+//            checkArea(grid, hashSet, i + 1, j);
+//            checkArea(grid, hashSet, i, j + 1);
+//        }
+//    }
 
 }
