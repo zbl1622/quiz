@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * 827. 最大人工岛(正确但是超时)
+ * 827. 最大人工岛
  * <p>
  * 给你一个大小为 n x n 二进制矩阵 grid 。最多 只能将一格0 变成1 。
  * <p>
