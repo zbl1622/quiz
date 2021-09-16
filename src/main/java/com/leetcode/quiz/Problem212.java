@@ -130,9 +130,13 @@ public class Problem212 {
         char c = board[i][j];
         if (trie.children.containsKey(c)) {
             System.out.println("check:" + trie.value);
+            Trie parent = trie;
             trie = trie.children.get(c);
             if (trie.isWord) {
                 result.add(trie.value);
+                if (trie.children.isEmpty()) {//枝剪优化
+                    parent.children.remove(c);
+                }
             }
             board[i][j] = '#';
             dfs(board, i - 1, j, trie, result);
